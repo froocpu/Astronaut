@@ -35,6 +35,14 @@ async function networkChart() {
         .attr("stroke-width", 0.4)
         .attr("stroke-opacity", 0.3);
 
+    // Define the div for the tooltip
+    var div = d3.select("body").append("div")	
+        .attr("class", "tooltip")				
+        .style("opacity", 1)
+        .style("display", 'inline')
+        .style("color", "#7C7C7E")
+        .style("font-size","14px");
+
     const node = svg.append("g")
         // .attr("stroke", "#a72461")
         // .attr("stroke-width", 0.1)
@@ -48,7 +56,22 @@ async function networkChart() {
             else if (d.label == "RUSSIA") {return "red"}
             else {return "#f2d974"}; 
         })
-        .attr("fill-opacity", 0.7);
+        .attr("fill-opacity", 0.7)
+        .on("mouseover", function(event, d){
+            console.log(d);
+            div.transition()
+            .duration(200)
+            .style("opacity", 1);
+            div.html(d.id)
+            .style("left", (event.pageX) + "px")
+            .style("top", (event.pageY - 28) + "px");
+
+        })
+        .on("mouseout", function(d){
+          div.transition()
+          .duration(500)
+          .style("opacity", 0);
+        });
         
     node.append("title")
         .text(d => d.id);
@@ -63,57 +86,7 @@ async function networkChart() {
       node
           .attr("cx", d => d.x)
           .attr("cy", d => d.y)
-          .on("mouseover", function(d){
-              div.transition()
-              .duration(200)
-              .style("opacity", 1);
-              div.html(d.id)
-              .style("left", (d3.event.pageX)+"px")
-              .style("top", (d3.event.pageY - 28)+"px");
-
-          })
-          .on("mouseout", function(d){
-            div.transition()
-            .duration(500)
-            .style("opacity", 0);
-          })
     });
-    
-    //adding a tooltip
-    // networkTooltip = d3.select("#svg").append('div')
-    //     .attr("class", 'networkTooltip')
-    //     .style("position", 'relative')
-    //     .style("display", 'inline')
-    //     // .style("background-color", 'black')
-    //     .style("color", "#7C7C7E")
-    //     .style("font-size","14px")
-    //     .style("top", 0)
-    //     .style("left", 0)
-    //     .attr("opacity", 1)
-
-    // function mouseEnter(datum, index) {
-
-    //     let id = data['nodes'][index['index']]['id']
-    //     let label = data['nodes'][index['index']]['label']
-
-    //     networkTooltip.style(
-    //         "transform",
-    //         `translate(` +
-    //         `calc(${datum.clientX}px),` +
-    //         ` calc(${datum.layerY}px)` +
-    //         ")"
-    //     ).style("top", datum.clientY)
-        
-    //         .text(data['nodes'][index['index']]['id'])
-    //         .style("opacity", 1)
-
-    // }
-
-    // node
-    //     .on("mouseenter", mouseEnter)
-    //     .on("mouseout", () => {
-    //         networkTooltip.style("opacity", 0)
-    //     })
 
   }
   networkChart()
